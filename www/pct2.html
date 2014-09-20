@@ -95,8 +95,7 @@
             opacity: .3
 		}
         
-        var queryLineData = $.getJSON( "data/line.json", { format: "json" });
-        var lineJson = L.geoJson(queryLineData, {
+        var lineJson = L.geoJson(linedata, {
 			style: lineStyle
 		}).addTo(map);
 
