@@ -52,20 +52,27 @@ def initdb():
     conn.close()
 
 
-def main():
+def fetch_data(method):
+    '''
+    Loads SPOT data from local json file or SPOT API
+    '''
+
+    if method == 'local':
+        resp = open('./spotdata.json')
+    if method == 'api':
+        spot_api_key = '0lp0XWumH993GUjq0LgzQnddQLR2NoNFN'
+        url = 'https://api.findmespot.com/spot-main-web/consumer/rest-api/2.0/public/feed/'
+        resp = urllib.urlopen(url + spot_api_key + '/message.json')
+
+    json_data = json.loads(resp.read())
+    data = json_data['response']['feedMessageResponse']['messages']['message']
+    return data
+
+
+def main(data):
     '''
     Everything
     '''
-
-    spot_api_key = '0lp0XWumH993GUjq0LgzQnddQLR2NoNFN'
-    #Uncomment following line to use Spot API instead of file
-    url = 'https://api.findmespot.com/spot-main-web/consumer/rest-api/2.0/public/feed/'
-    #resp = urllib.urlopen(url + spot_api_key + '/message.json')
-    resp = open('./spotdata.json')
-
-    json_data = json.loads(resp.read())
-
-    data = json_data['response']['feedMessageResponse']['messages']['message']
 
     #PostgreSQL connected requires cursor; Selects maximum unixtime to determine latest entry
     try:
@@ -116,4 +123,4 @@ def main():
 
 if __name__ == '__main__':
     initdb()
-    main()
+    main(fetch_data('local'))
