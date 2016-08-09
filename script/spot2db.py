@@ -14,6 +14,44 @@ import urllib
 import psycopg2
 
 
+def initdb():
+    '''
+    Creates points table in pct_spot database
+    '''
+    try:
+        database = 'pct_spot'
+        user = 'postgres'
+        password = 'password'
+        host = '172.17.0.2'
+        conn = psycopg2.connect(database=database, user=user, password=password, host=host)
+    except psycopg2.OperationalError:
+        print "WARNING: Unable to connect to the database."
+        sys.exit(1)
+    cur = conn.cursor()
+    query = '''CREATE TABLE IF NOT EXISTS points
+             (
+                          longitude float8,
+                          unixtime int8,
+                          messagetype varchar,
+                          datetime date,
+                          showcustommsg varchar,
+                          messengername varchar,
+                          messengerid varchar,
+                          batterystate varchar,
+                          latitude float8,
+                          hidden varchar,
+                          modelid varchar,
+                          id varchar,
+                          "@clientUnixTime" varchar,
+                          geom geometry
+             );
+			'''
+    cur.execute(query)
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
 def main():
     '''
     Everything
@@ -34,7 +72,7 @@ def main():
         database = 'pct_spot'
         user = 'postgres'
         password = 'password'
-        host = 'localhost'
+        host = '172.17.0.2'
         conn = psycopg2.connect(database=database, user=user, password=password, host=host)
     except psycopg2.OperationalError:
         print "WARNING: Unable to connect to the database."
@@ -77,4 +115,5 @@ def main():
 
 
 if __name__ == '__main__':
+    initdb()
     main()
